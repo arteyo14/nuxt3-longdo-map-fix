@@ -1,8 +1,13 @@
 <template>
   <div class="container">
-    <div id="pano-longdo" v-if="isPanoShow"></div>
-    <div class="postion-relative">
-      <div :ref="containerClassRef" :class="containerClassRef" id="longdo-map">
+    <div id="pano-longdo" :style="{ display: isPanoShow ? '' : 'none' }"></div>
+    <div class="position-relative">
+      <div
+        :ref="containerClassRef"
+        :class="containerClassRef"
+        :style="{ height: isPanoShow ? '50vh' : '100vh' }"
+        id="longdo-map"
+      >
         ...loading
       </div>
       <button class="btn btn-primary position-absolute" @click="togglePano">
@@ -13,18 +18,23 @@
 </template>
 
 <script setup lang="ts">
+const emit = defineEmits(["loaded"]);
+
 const longdoMapApiKey = "f38639d33e37f4e422cd8085d997d55f";
+
 const longdo = ref(null);
 const longdoPano = ref(null);
 const pano = ref(null);
 const map = ref(null);
+
 const containerClassRef = ref("longdo-map-container");
 const scriptTagId = "longdo-map-script";
-const isPanoShow = ref(true);
-const emit = defineEmits(["loaded"]);
+const isPanoShow = ref(false);
+
 onMounted(() => {
   addMapScript();
 });
+
 function addMapScript() {
   const existingScript = document.getElementById(scriptTagId);
   if (!existingScript && !longdo.value) {
@@ -57,18 +67,13 @@ function initialMap() {
     placeholder: document.querySelector("#pano-longdo"),
     map: map.value,
     showPath: true,
+    isEnable: true,
   });
-  // await initialPano(map);
 }
-// function initialPano(mapValue) {
-//   pano.value = new longdo.value.PanoramaViewer({
-//     placeholder: document.querySelector("#pano-longdo"),
-//     map: mapValue.value,
-//     showPath: true,
-//   });
-// }
+
 const togglePano = () => {
   isPanoShow.value = !isPanoShow.value;
+  console.log(isPanoShow.value);
 };
 </script>
 
