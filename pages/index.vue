@@ -28,9 +28,8 @@ const onLoadedLongDoMap = (longdo, map) => {
     )
   );
 
+  //Creating Line from wkt data
   const wktArray = ref([...line]);
-
-  // // console.log(line);
 
   let wkt = ref(
     wktArray.value.map((item) => {
@@ -43,13 +42,8 @@ const onLoadedLongDoMap = (longdo, map) => {
   );
 
   wkt.value.map((x) => map.Overlays.add(x[0]));
-  // const wkt = wktArray.value.join("\n");
 
-  // const shapes = ref(longdo.Util.overlayFromWkt(wkt));
-
-  // map.Overlays.add(shapes.value);
-  // console.log(wkt8);
-
+  //creating Marker
   map.Overlays.add(
     new longdo.Marker({
       lat: 13,
