@@ -5,13 +5,12 @@
 </template>
 
 <script setup lang="ts">
+import line from "../services/line.ts";
 const longdo = ref(null);
 const map = ref(null);
 
 const onLoadedLongDoMap = (longdo, map) => {
   (longdo.value = longdo.value), (map.value = map.value);
-
-  // const polyline1 =
 
   map.Overlays.add(
     new longdo.Polyline(
@@ -28,6 +27,28 @@ const onLoadedLongDoMap = (longdo, map) => {
       }
     )
   );
+
+  const wktArray = ref([...line]);
+
+  // // console.log(line);
+
+  let wkt = ref(
+    wktArray.value.map((item) => {
+      return longdo.Util.overlayFromWkt(item, {
+        lineColor: `rgb(${Math.random() * 255},${Math.random() * 255},${
+          Math.random() * 255
+        })`,
+      });
+    })
+  );
+
+  wkt.value.map((x) => map.Overlays.add(x[0]));
+  // const wkt = wktArray.value.join("\n");
+
+  // const shapes = ref(longdo.Util.overlayFromWkt(wkt));
+
+  // map.Overlays.add(shapes.value);
+  // console.log(wkt8);
 
   map.Overlays.add(
     new longdo.Marker({
