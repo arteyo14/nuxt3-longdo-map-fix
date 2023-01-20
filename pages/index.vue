@@ -14,7 +14,8 @@ const longdo = ref(null);
 const map = ref(null);
 
 const onLoadedLongDoMap = (longdo, map) => {
-  (longdo.value = longdo.value), (map.value = map.value);
+  longdo.value = longdo.value;
+  map.value = map.value;
 
   // map.Overlays.add(
   //   new longdo.Polyline(
@@ -59,9 +60,9 @@ const onLoadedLongDoMap = (longdo, map) => {
   // map.Overlays.add(wktPolygon[0]);
 
   wktLine.value.map((x) => map.Overlays.add(x[0]));
-  wktPoints.value.map((x) =>
-    map.Overlays.add(x[0], { fillColor: "rgb(120,255,0)" })
-  );
+  // wktPoints.value.map((x) =>
+  //   map.Overlays.add(x[0], { fillColor: "rgb(120,255,0)" })
+  // );
 
   //creating Marker
   map.Overlays.add(

@@ -1,12 +1,8 @@
 <template>
   <div class="container-fluid">
     <div class="position-relative">
-      <div
-        :ref="containerClassRef"
-        :class="containerClassRef"
-        :style="{ height: !isPanoShow ? '100vh' : '50vh' }"
-        id="longdo-map"
-      >
+      {{ positionStore.positions }}
+      <div :ref="containerClassRef" :class="containerClassRef" id="longdo-map">
         ...loading
       </div>
     </div>
@@ -14,13 +10,21 @@
 </template>
 
 <script setup lang="ts">
-const emit = defineEmits(["loaded"]);
+import { usePositionStore } from "../store/latLonStore";
 
+const positionStore = usePositionStore();
+const emit = defineEmits(["loaded", "getData", "getData:toMap"]);
+const props = defineProps({
+  positions: {
+    type: Object,
+  },
+});
+
+const positions = toRaw(props.positions);
+console.log(positions);
 const longdoMapApiKey = "f38639d33e37f4e422cd8085d997d55f";
-
 const longdo = ref(null);
 const map = ref(null);
-
 const containerClassRef = ref("longdo-map-container");
 const scriptTagId = "longdo-map-script";
 
@@ -30,6 +34,8 @@ const mapValue = ref(null);
 
 const addMapScript = () => {
   const cursor = ref(null);
+  const exisitingScript = document.createElement("script");
+
   scriptMap.value = document.createElement("script");
   scriptMap.value.src = `https://api.longdo.com/map/?key=${longdoMapApiKey}`;
   scriptMap.value.id = scriptTagId;
@@ -40,23 +46,27 @@ const addMapScript = () => {
     map.value = new longdo.value.Map({
       placeholder: document.querySelector("#longdo-map"),
     });
-
-    // cursor.value = map.value.getCursor();
-    // console.log("Latitude: " + cursor.lat);
-    // console.log("Longitude: " + cursor.lon);
+    map.value.location({
+      lon: positionStore.positions.lon,
+      lat: positionStore.positions.lat,
+    });
     map.value.Event.bind("ready", () => {
       emit("loaded", longdo.value, map.value);
-    });
-    map.value.Event.bind("drag", () => {
-      const cursor = map.value.location();
-      console.log("Latitude: " + cursor.lat);
-      console.log("Longitude: " + cursor.lon);
     });
   };
 };
 
 onBeforeMount(() => {
   addMapScript();
+});
+
+watchEffect(() => {
+  if (map.value) {
+    map.value.location({
+      lon: positionStore.positions.lon,
+      lat: positionStore.positions.lat,
+    });
+  }
 });
 
 onBeforeUnmount(() => {
