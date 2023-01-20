@@ -1,9 +1,7 @@
 <template>
   <div class="container-fluid">
     <div class="position-relative">
-      <div :ref="containerClassRef" :class="containerClassRef" id="longdo-map">
-        ...loading
-      </div>
+      <div :class="containerClassRef" id="longdo-map">...loading</div>
     </div>
   </div>
 </template>
@@ -19,10 +17,7 @@ const longdo = ref(null);
 const map = ref(null);
 const containerClassRef = ref("longdo-map-container");
 const scriptTagId = "longdo-map-script";
-
 const scriptMap = ref(null);
-
-const mapValue = ref(null);
 
 const addMapScript = () => {
   scriptMap.value = document.createElement("script");

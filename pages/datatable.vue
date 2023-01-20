@@ -24,7 +24,7 @@
         </table>
       </div>
       <div class="col-lg-5">
-        <LongDoMap :positions="positionStore.positions" />
+        <LongDoMap />
       </div>
     </div>
   </div>
@@ -37,7 +37,5 @@ import { usePositionStore } from "../store/latLonStore";
 const positionStore = usePositionStore();
 const longdo = ref(null);
 const map = ref(null);
-const emit = defineEmits(["getData"]);
-
 const positions = toRaw(ref({ lon: null, lat: null }));
 </script>
