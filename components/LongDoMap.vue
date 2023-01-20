@@ -1,7 +1,6 @@
 <template>
   <div class="container-fluid">
     <div class="position-relative">
-      {{ positionStore.positions }}
       <div :ref="containerClassRef" :class="containerClassRef" id="longdo-map">
         ...loading
       </div>
@@ -13,15 +12,8 @@
 import { usePositionStore } from "../store/latLonStore";
 
 const positionStore = usePositionStore();
-const emit = defineEmits(["loaded", "getData", "getData:toMap"]);
-const props = defineProps({
-  positions: {
-    type: Object,
-  },
-});
+const emit = defineEmits(["loaded"]);
 
-const positions = toRaw(props.positions);
-console.log(positions);
 const longdoMapApiKey = "f38639d33e37f4e422cd8085d997d55f";
 const longdo = ref(null);
 const map = ref(null);
@@ -33,9 +25,6 @@ const scriptMap = ref(null);
 const mapValue = ref(null);
 
 const addMapScript = () => {
-  const cursor = ref(null);
-  const exisitingScript = document.createElement("script");
-
   scriptMap.value = document.createElement("script");
   scriptMap.value.src = `https://api.longdo.com/map/?key=${longdoMapApiKey}`;
   scriptMap.value.id = scriptTagId;
@@ -46,10 +35,7 @@ const addMapScript = () => {
     map.value = new longdo.value.Map({
       placeholder: document.querySelector("#longdo-map"),
     });
-    map.value.location({
-      lon: positionStore.positions.lon,
-      lat: positionStore.positions.lat,
-    });
+
     map.value.Event.bind("ready", () => {
       emit("loaded", longdo.value, map.value);
     });
@@ -66,6 +52,7 @@ watchEffect(() => {
       lon: positionStore.positions.lon,
       lat: positionStore.positions.lat,
     });
+    map.value.zoom(18);
   }
 });
 

@@ -20,18 +20,10 @@
               <td>{{ item.lat }}</td>
               <td>{{ item.lon }}</td>
             </tr>
-            <!-- <tr class="text-center">
-              <td>1</td>
-              <td>0+000</td>
-              <td>1+000</td>
-              <td>13.818028</td>
-              <td>100.521057</td>
-            </tr> -->
           </tbody>
         </table>
       </div>
       <div class="col-lg-5">
-        {{ positionStore.positions }}
         <LongDoMap :positions="positionStore.positions" />
       </div>
     </div>
