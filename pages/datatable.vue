@@ -12,8 +12,20 @@
               <th>Lon</th>
             </tr>
           </thead>
-          <tbody v-for="item of data" :key="item.id">
-            <tr class="text-center" @click="positionStore.changePosition(item)">
+          <tbody>
+            <tr
+              v-for="(item, index) of data"
+              :key="item.id"
+              class="text-center"
+              :class="{ 'table-active': dataSelected === item.id }"
+              @click="
+                () => {
+                  //   positionStore.changePosition(item);
+                  toggleDataSelected(item);
+                }
+              "
+              style="cursor: pointer"
+            >
               <td>{{ item.id }}</td>
               <td>{{ item.kmStart }}</td>
               <td>{{ item.kmEnd }}</td>
@@ -24,7 +36,7 @@
         </table>
       </div>
       <div class="col-lg-5">
-        <LongDoMap />
+        <LongDoMap @loaded="loadedLineMap" />
       </div>
     </div>
   </div>
@@ -33,9 +45,38 @@
 <script setup lang="ts">
 import data from "../services/data.ts";
 import { usePositionStore } from "../store/latLonStore";
+// import { NuxtLink } from "../.nuxt/components";
+
+const isActive = ref();
 
 const positionStore = usePositionStore();
 const longdo = ref(null);
 const map = ref(null);
 const positions = toRaw(ref({ lon: null, lat: null }));
+const dataSelected = ref(null);
+
+const loadedLineMap = (longdo, map) => {
+  longdo.value = longdo;
+  map.value = map;
+
+  const line = data.map((item) => {
+    return { lon: item.lon, lat: item.lat };
+  });
+  const lineGeom = new longdo.value.Polyline(line, {
+    lineColor: `rgb(255,0,0)`,
+  });
+  map.value.Overlays.add(lineGeom);
+};
+
+const toggleDataSelected = (item) => {
+  dataSelected.value = item.id;
+  positionStore.changePosition(item);
+};
 </script>
+
+<style scoped>
+.table-active {
+  background-color: #20c997;
+  color: #fff;
+}
+</style>
