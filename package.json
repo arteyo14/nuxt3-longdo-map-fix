@@ -14,6 +14,7 @@
     "@pinia/nuxt": "^0.4.6",
     "bootstrap": "^5.2.3",
     "data.js": "^0.12.11",
+    "heatmap.js": "^2.0.5",
     "pinia": "^2.0.29"
   }
 }

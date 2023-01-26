@@ -8,6 +8,7 @@
 
 <script setup lang="ts">
 import { usePositionStore } from "../store/latLonStore";
+import "heatmap.js";
 
 const positionStore = usePositionStore();
 const emit = defineEmits(["loaded"]);
@@ -37,8 +38,23 @@ const addMapScript = () => {
   };
 };
 
+const addHeatMapJS = () => {
+  //Heatmap.js
+  const scriptHeat = document.createElement("script");
+  scriptHeat.src = "heatmap.js";
+  scriptHeat.id = "heatmapJS-script";
+  document.head.appendChild(scriptHeat);
+
+  //longdoHeatMap.js
+  const longdoHeatMap = document.createElement("script");
+  longdoHeatMap.src = "../plugins/longdomap-heatmap/longdomap-heatmap";
+  longdoHeatMap.id = "longdo-heatmap";
+  document.head.appendChild(longdoHeatMap);
+};
+
 onBeforeMount(() => {
   addMapScript();
+  addHeatMapJS();
 });
 
 watchEffect(() => {
@@ -53,7 +69,12 @@ watchEffect(() => {
 
 onBeforeUnmount(() => {
   const scriptM = document.getElementById(scriptTagId);
+  const scriptHM = document.getElementById("heatmapJS-script");
+  const scriptLongdoHM = document.getElementById("longdo-heatmap");
+
   scriptM.parentNode.removeChild(scriptM);
+  scriptHM.parentNode.removeChild(scriptHM);
+  scriptLongdoHM.parentElement.removeChild(scriptLongdoHM);
   longdo.value = null;
   map.value = null;
 });
