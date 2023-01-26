@@ -34,6 +34,14 @@
             </tr>
           </tbody>
         </table>
+        <div class="d-flex gap-2">
+          <button class="btn bg-success text-white" @click="showWMS = !showWMS">
+            WMS
+          </button>
+          <button class="btn bg-success text-white" @click="showTMS = !showTMS">
+            TMS
+          </button>
+        </div>
       </div>
       <div class="col-lg-5">
         <LongDoMap @loaded="loadedLineMap" />
@@ -45,7 +53,8 @@
 <script setup lang="ts">
 import data from "../services/data.ts";
 import { usePositionStore } from "../store/latLonStore";
-// import { NuxtLink } from "../.nuxt/components";
+// import "heatmap.js";
+// import "../plugins/longdomap-heatmap/longdomap-heatmap";
 
 const isActive = ref();
 
@@ -55,9 +64,27 @@ const map = ref(null);
 const positions = toRaw(ref({ lon: null, lat: null }));
 const dataSelected = ref(null);
 
-const loadedLineMap = (longdo, map) => {
-  longdo.value = longdo;
-  map.value = map;
+const loadedLineMap = (longdoValue, mapValue) => {
+  longdo.value = longdoValue;
+  map.value = mapValue;
+
+  //heatmap
+  const testData = {
+    max: 10,
+    data: [
+      { lat: 60.087195, lon: 84.767761, value: 8 },
+      { lat: 41.804724, lon: -104.021301, value: 4 },
+    ],
+  };
+  const cfg = {
+    radius: 25,
+    maxOpacity: 0.5,
+    scaleRadius: true,
+    useLocalExtrema: true,
+  };
+
+  // const heatmapLayer = new HeatmapOverlay(cfg);
+  // heatmapLayer.setData(testData);
 
   const line = data.map((item) => {
     return { lon: item.lon, lat: item.lat };
@@ -66,11 +93,54 @@ const loadedLineMap = (longdo, map) => {
     lineColor: `rgb(255,0,0)`,
   });
   map.value.Overlays.add(lineGeom);
+
+  //wms & tms
+  wmsLayer(longdoValue, mapValue);
+  tmsLayer(longdoValue, mapValue);
 };
 
 const toggleDataSelected = (item) => {
   dataSelected.value = item.id;
   positionStore.changePosition(item);
+};
+
+//WMS Layer & TMS Layer
+const showWMS = ref(false);
+const showTMS = ref(false);
+
+const wmsLayer = (longdo: any, map: any) => {
+  const wms = new longdo.Layer("bluemarble_terrain", {
+    type: longdo.LayerType.WMS,
+    url: "https://ms.longdo.com/mapproxy/service",
+    zoomRange: { min: 1, max: 18 },
+    refresh: 180,
+    opacity: 0.5,
+    weight: 10,
+  });
+
+  watchEffect(() => {
+    if (showWMS.value) {
+      map.Layers.add(wms);
+    } else {
+      map.Layers.remove(wms);
+    }
+  });
+};
+
+const tmsLayer = (longdo: any, map: any) => {
+  const tms = new longdo.Layer("bluemarble_terrain", {
+    type: longdo.LayerType.WMTS_REST,
+    url: "https://ms.longdo.com/mapproxy/wmts",
+    srs: "GLOBAL_WEBMERCATOR",
+  });
+
+  watchEffect(() => {
+    if (showTMS.value) {
+      map.Layers.add(tms);
+    } else {
+      map.Layers.remove(tms);
+    }
+  });
 };
 </script>
 
