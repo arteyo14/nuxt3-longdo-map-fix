@@ -68,24 +68,6 @@ const loadedLineMap = (longdoValue, mapValue) => {
   longdo.value = longdoValue;
   map.value = mapValue;
 
-  //heatmap
-  const testData = {
-    max: 10,
-    data: [
-      { lat: 60.087195, lon: 84.767761, value: 8 },
-      { lat: 41.804724, lon: -104.021301, value: 4 },
-    ],
-  };
-  const cfg = {
-    radius: 25,
-    maxOpacity: 0.5,
-    scaleRadius: true,
-    useLocalExtrema: true,
-  };
-
-  // const heatmapLayer = new HeatmapOverlay(cfg);
-  // heatmapLayer.setData(testData);
-
   const line = data.map((item) => {
     return { lon: item.lon, lat: item.lat };
   });
@@ -97,6 +79,12 @@ const loadedLineMap = (longdoValue, mapValue) => {
   //wms & tms
   wmsLayer(longdoValue, mapValue);
   tmsLayer(longdoValue, mapValue);
+
+  //tags
+  // map.value.add("hotel", {
+  //   visibleRange: { min: 10, max: 20 },
+  //   icon: { url: "https://mmmap15.longdo.com/mmmap/images/icons/hotel.png" },
+  // });
 };
 
 const toggleDataSelected = (item) => {
